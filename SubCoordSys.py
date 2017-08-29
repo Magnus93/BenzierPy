@@ -3,7 +3,8 @@ import pygame
 import mouse
 import trans2D
 
-
+screen = pygame.display.set_mode((800,600))
+mytimer = pygame.time.Clock()
 
 class CoordSys:
 	def __init__(self, mv0, mv1):
@@ -23,7 +24,10 @@ class CoordSys:
 	def worldToLocal(self, pWorld):
 		#inv = inverse
 		# pLocal(pWorld) = inv(S)*inv(R)*inv(T)*pWorld
-		pass
+		iTpW = trans2D.translate(pWorld, trans2D.negate((self.p0.x, self.p0.y)))
+		iRiTpW = trans2D.rotateTrig(iTpW, (0,0), -self.sin, self.cos)
+		pLocal = trans2D.scale(iRiTpW, (0,0) ,(1.0/self.scale))
+		return pLocal
 		
 	def localToWorld(self, pLocal):
 		# pWorld(pLocal) = T*R*S*pLocal
@@ -36,7 +40,6 @@ class CoordSys:
 	
 	def drawGrid(self):
 		for i in range(0,101, 10):
-			print i
 			pWorldStart = self.localToWorld((0,i-50))
 			pWorldEnd   = self.localToWorld((100,i-50))
 			pygame.draw.line(screen, 0xff0000, pWorldStart, pWorldEnd, 1)
@@ -46,11 +49,23 @@ class CoordSys:
 		
 
 if __name__ == "__main__":
-	screen = pygame.display.set_mode((800,600))
-	mytimer = pygame.time.Clock()
 	circ1 = anchor02.Variable("start", 500, 400)
 	circ2 = anchor02.Variable("end", 40, 30)
 	coo = CoordSys(circ1, circ2)
+	
+	
+	### --- Testing world to local localto world ---
+	a0 = (3,0)
+	a1 = coo.localToWorld(a0)
+	a2 = coo.worldToLocal(a1)
+	print a0, a1, a2
+	print "________________________"
+	
+	a0 = (100,100)
+	a1 = coo.localToWorld(a0)
+	a2 = coo.worldToLocal(a1)
+	print a0, a1, a2
+	###
 	
 	while(True): 
 		screen.fill(0x222222)
@@ -60,3 +75,7 @@ if __name__ == "__main__":
 		coo.drawGrid()
 		pygame.display.flip()
 		mytimer.tick(24)
+
+
+
+

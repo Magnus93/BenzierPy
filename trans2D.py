@@ -2,11 +2,11 @@ import math
 
 
 def negate(point):
-	return (point[0], point[1])
+	return (-point[0], -point[1])
 
 
 def translate(point, translation):
-	return (point[0]+translation[0], point[1]+translation[1])
+        return (point[0]+translation[0], point[1]+translation[1])
 
 ### point to be rotated in integer tuple
 ### pivot to rotate around in tuple
