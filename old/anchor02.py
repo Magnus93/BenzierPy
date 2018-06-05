@@ -9,7 +9,7 @@ pygame.font.init()
 mytimer = pygame.time.Clock()
 font = pygame.font.SysFont("verdana", 11)
 
-DRAW_GRID = True
+DRAW_GRID = False
 
 class Moveble:
     def __init__(self, x, y):
@@ -21,7 +21,6 @@ class Moveble:
 	def getPos(self):
 		return (self.x, self.y)
 	
-
     def setPos(self, (x, y)):
 		self.x = x
 		self.y = y
