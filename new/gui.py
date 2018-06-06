@@ -220,18 +220,11 @@ class dropdown:                                                         # dropdo
     def set_pos(self, x, y):
         (self.x, self.y) = (x, y)
 
-def exit():                                                             # exit function
-    pygame.quit()
+def exit():   # exit function
     sys.exit()
 
-def exit_butt(x=700, y=0):                                              # create exit button
+def exit_butt(x=700, y=0):  # create exit button
     return button("   X   ", x ,y, exit, w = 52, color1 = (120,100,100), color2 = (170,100,100))
-
-
-
-
-
-
 
 
 # -----------------------------Testing code ----------------------------
