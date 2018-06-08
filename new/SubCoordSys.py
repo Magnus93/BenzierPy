@@ -1,4 +1,4 @@
-import anchor02
+#import anchor02
 import pygame
 import mouse
 import trans2D
