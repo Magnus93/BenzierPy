@@ -27,6 +27,12 @@ class button:															# button class
         string += " color1: " + str(self.color1) + "\n"
         string += " color2: " + str(self.color2) + "\n"
         return string
+        
+    def getName(self):
+        return self.name
+
+    def setAction(self, action):
+        self.action = action
 
     def run(self):
         (x,y) = mouse.pos
@@ -34,7 +40,7 @@ class button:															# button class
             self.color = self.color2
             textcolor = (255,255,255)
             if mouse.down[0]:
-                self.action()
+                return self.action()
         else:
             self.color = self.color1
             textcolor = (0,0,0)
@@ -220,6 +226,20 @@ class dropdown:                                                         # dropdo
     def set_pos(self, x, y):
         (self.x, self.y) = (x, y)
 
+class justText:
+    def __init__(self, text, x, y, color=(255, 255, 255)):
+        self.text = text
+        self.x = x
+        self.y = y
+        self.color = color
+    def draw(self):
+        TEXT = smallfont.render(self.text, 1, self.color)
+        screen.blit(TEXT,(self.x,self.y))
+    def run(self):
+        self.draw()
+    def setText(self, text):
+        self.text = text
+
 def exit():   # exit function
     sys.exit()
 
@@ -238,6 +258,7 @@ if __name__ == "__main__":
     mybutton = button("Set slider to 10", 40, 100, set_to_ten)
     mytoggle = toggle("my toggle YEAH!!", 40, 130)
     mydrop = dropdown("This is a drop down", 40, 160, ["awesome","very cool","Nice!","Charlston", "Dance!"])
+    myText = justText("This is a simple text", 40, 190)
 
     def say_hello():
         print "hi to you!!!"
@@ -251,6 +272,7 @@ if __name__ == "__main__":
             myslider.run()
             mytoggle.run()
             mydrop.run()
+            myText.run()
             if mydrop.change:
                 print mydrop.change
             pygame.display.flip()
