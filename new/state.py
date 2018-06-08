@@ -4,25 +4,36 @@ import gui
 import mouse
 
 
-# tools
-TOOLS = {}
-SELECT = 0
-TOOLS[SELECT] = "Select"
+class state:
+    def __init__(self, modeNameList):
+        self.modeList = modeNameList
+        self.currentMode = self.modeList[0]  
+        self.objectList = []
+        self.selectedObjects = []
 
-CREATEBOX = 1
-TOOLS[CREATEBOX] = "Create Box"
+    def setMode(self, mode):
+        self.currentMode = mode
+        
+    def getMode(self):
+        return self.currentMode
 
-CREATESPHERE = 2
-TOOLS[CREATESPHERE] = "Create Sphere"
+    def addObject(self, obj):
+        self.objectList.append(obj)
 
-CREATECONNECTION = 3
-TOOLS[CREATECONNECTION] = "Create Connection"
+    def run(self):
+        pass
 
 # State attributes
-tool = SELECT
 selected = []
 objects = []
 
+
+def initButtonControls(x, y):
+    selectButton = gui.button("Select", 10+x, 5+y, selectHandler)
+    pass
+
+def runButtonControls():
+    pass
 
 def run():
     
