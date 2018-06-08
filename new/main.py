@@ -7,7 +7,6 @@ screen = pygame.display.set_mode((1200, 800))
 pygame.font.init()
 mytimer = pygame.time.Clock()
 
-
 class state:
     def __init__(self):
         self.modes = ["select", "box", "sphere", "connection", "delete"]
@@ -119,7 +118,6 @@ class state:
         self.runMode()
         self.runObjects()
         self.runConnections()
-
 
 def loop():
     while(True):
