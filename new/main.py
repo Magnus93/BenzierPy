@@ -2,6 +2,7 @@ import pygame
 import mouse
 import controls
 import moveble
+import conn 
 
 screen = pygame.display.set_mode((1200, 800))
 pygame.font.init()
@@ -65,15 +66,16 @@ class state:
             startObj = self.isHitObject()
             if startObj != None:
                 self.isCreatingConn = True 
-                self.connList.append(moveble.Connection(startObj))
+                self.connList.append(conn.Connection(startObj))
         if mouse.up[0] and self.isCreatingConn:
             self.isCreatingConn = False
             self.changeMode("select")
             endObj = self.isHitObject()
-            self.setLastConnectionEndNode(endObj)
             if (endObj == None or endObj == self.getLastConnection().getStartNode()):
                 self.deleteLastConnection()
                 self.changeMode("select")
+            else:
+                self.setLastConnectionEndNode(endObj)
 
     def getLastConnection(self):
         return self.connList[-1]
