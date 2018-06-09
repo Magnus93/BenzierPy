@@ -63,14 +63,20 @@ class state:
     
     def runCreateConnectionMode(self):
         if mouse.down[0]:
-            startObj = self.isHitObject()
+            startObj = self.isHitObjects()
             if startObj != None:
                 self.isCreatingConn = True 
                 self.connList.append(conn.Connection(startObj))
+        
+        if self.isCreatingConn:
+            connect = self.getLastConnection()
+            if (connect.getStartNode().isHit()):
+                connect.placeStartNode()
+
         if mouse.up[0] and self.isCreatingConn:
             self.isCreatingConn = False
             self.changeMode("select")
-            endObj = self.isHitObject()
+            endObj = self.isHitObjects()
             if (endObj == None or endObj == self.getLastConnection().getStartNode()):
                 self.deleteLastConnection()
                 self.changeMode("select")
@@ -86,7 +92,7 @@ class state:
     def deleteLastConnection(self):
         self.connList = self.connList[:-1]
 
-    def isHitObject(self):
+    def isHitObjects(self):
         for o in self.objList:
             if (o.isHit()):
                 return o
