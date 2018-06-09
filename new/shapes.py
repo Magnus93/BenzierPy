@@ -1,6 +1,6 @@
 import trans2D
 
-def calcBezier(anchor0, anchor1, handle0, handle1, steps=20):
+def calcBezier(anchor0, anchor1, handle0, handle1, steps=30):
     t = 0
     pointlist = []
     p0 = anchor0 
