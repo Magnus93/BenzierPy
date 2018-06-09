@@ -3,6 +3,7 @@ import mouse
 import controls
 import moveble
 import conn 
+import trans2D
 
 screen = pygame.display.set_mode((1200, 800))
 pygame.font.init()
@@ -71,10 +72,13 @@ class state:
         if self.isCreatingConn:
             connect = self.getLastConnection()
             hitObject = self.isHitObjects()
+            length = trans2D.distance(connect.getStartNode().getPos(), mouse.pos)
+            connect.setStartVectorLength(0.4*length)
             if (connect.getStartNode().isHit()):
                 connect.placeStartNode()
             elif(hitObject != None and hitObject != connect.getStartNode()):
                 connect.setEndNode(hitObject)
+                connect.setEndVectorLength(0.4*length)
             else:
                 connect.removeEndNode()
 

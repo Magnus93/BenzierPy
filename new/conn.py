@@ -92,6 +92,12 @@ class Connection:
         self.path = [(400,400), (450,400)]
         self.color = color 
 
+    def setStartVectorLength(self, length):
+        self.vector0.setLength(length)
+
+    def setEndVectorLength(self, length):
+        self.vector1.setLength(length)
+
     def getStartNode(self):
         return self.vector0.getAnchorNode()
 
@@ -146,6 +152,10 @@ class Vector:
         nodeCenterPos = (self.anchorNode.x, self.anchorNode.y)
         self.handlePos = trans2D.getHandlePos(self.anchorPos, nodeCenterPos, vectorLength)
     
+    def setLength(self, length):
+        nodeCenterPos = (self.anchorNode.x, self.anchorNode.y)
+        self.handlePos = trans2D.getHandlePos(self.anchorPos, nodeCenterPos, length)
+
     def removeAnchor(self):
         self.anchorNode = None 
 
