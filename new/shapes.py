@@ -15,6 +15,14 @@ def calcBezier(anchor0, anchor1, handle0, handle1, steps=30):
     pointlist.append(anchor1)
     return pointlist
 
+def calcIntegerBezier(anchor0, anchor1, handle0, handle1, steps=30):
+    floatPosList = calcBezier(anchor0, anchor1, handle0, handle1, steps)
+    integerPosList = [] 
+    for p in floatPosList:
+        integerPosList.append((int(p[0]), int(p[1])))
+    return integerPosList 
+
+
 def calcArrow(pos, point0, point1, height=15):
     pointlist = [(0,0), (height, -height/3), (height, height/3)]
     newList = []

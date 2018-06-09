@@ -70,8 +70,13 @@ class state:
         
         if self.isCreatingConn:
             connect = self.getLastConnection()
+            hitObject = self.isHitObjects()
             if (connect.getStartNode().isHit()):
                 connect.placeStartNode()
+            elif(hitObject != None and hitObject != connect.getStartNode()):
+                connect.setEndNode(hitObject)
+            else:
+                connect.removeEndNode()
 
         if mouse.up[0] and self.isCreatingConn:
             self.isCreatingConn = False
@@ -79,7 +84,6 @@ class state:
             endObj = self.isHitObjects()
             if (endObj == None or endObj == self.getLastConnection().getStartNode()):
                 self.deleteLastConnection()
-                self.changeMode("select")
             else:
                 self.setLastConnectionEndNode(endObj)
 

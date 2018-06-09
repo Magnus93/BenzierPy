@@ -47,11 +47,17 @@ def distance(point1, point2):
 
 def cos(point1, point2):
 	dist = distance(point1, point2)
-	return distanceX(point1,point2)/(dist+0.0)
+	if dist == 0:
+		return 0
+	else:
+		return distanceX(point1,point2)/(dist+0.0)
 	
 def sin(point1, point2):
 	dist = distance(point1, point2)
-	return  distanceY(point1,point2)/(dist+0.0)
+	if dist == 0:
+		return 0
+	else:
+		return  distanceY(point1,point2)/(dist+0.0)
 	
 # ---- Vector-functions below -----
 

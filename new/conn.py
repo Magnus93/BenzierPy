@@ -96,11 +96,13 @@ class Connection:
         return self.vector0.getAnchorNode()
 
     def placeStartNode(self):
-        vectorLength = 100
-        self.vector0.setAnchorNode(self.vector0.getAnchorNode(), vectorLength)
+        self.vector0.setAnchorNode(self.vector0.getAnchorNode())
 
     def setEndNode(self, node):
         self.vector1 = Vector(node) 
+    
+    def removeEndNode(self):
+        self.vector1 = None  
 
     def calcPath(self):
         anchor0 = self.vector0.getAnchorPos()
@@ -111,12 +113,19 @@ class Connection:
         else: 
             anchor1 = mouse.pos
             handle1 = mouse.pos     
-        self.path = shapes.calcBezier(anchor0, anchor1, handle0, handle1)
+        self.path = shapes.calcIntegerBezier(anchor0, anchor1, handle0, handle1)
 
     def draw(self):
         pygame.draw.aalines(screen, self.color, False, self.path, 1) 
+        pygame.draw.circle(screen, self.color, (self.path[0]), 5, 1)
+        # self.drawArrow()
         self.vector0.draw()
-        # self.vector1.draw()
+        if (self.vector1 != None):
+            self.vector1.draw()
+
+    def drawArrow(self): #Not working
+        arrowList = shapes.calcArrow(self.path[-1], self.path[-1], self.path[-2])
+        pygame.draw.polygon(screen, self.color, arrowList, 1)
 
     def run(self):
         self.calcPath()
@@ -131,12 +140,15 @@ class Vector:
         self.setAnchorNode(anchorNode)
         self.color = color 
 
-    def setAnchorNode(self, node, vectorLength=30):
+    def setAnchorNode(self, node, vectorLength=100):
         self.anchorNode = node
         self.anchorPos = node.nearestEdge(mouse.pos)
         nodeCenterPos = (self.anchorNode.x, self.anchorNode.y)
         self.handlePos = trans2D.getHandlePos(self.anchorPos, nodeCenterPos, vectorLength)
     
+    def removeAnchor(self):
+        self.anchorNode = None 
+
     def getAnchorNode(self):
         return self.anchorNode 
 
