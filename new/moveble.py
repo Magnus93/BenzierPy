@@ -65,13 +65,13 @@ class Circle(Moveble):
     def nearestEdge(self, (xIn, yIn)):
         distIn = trans2D.distance((self.x, self.y), (xIn, yIn))
         distEdge = self.r 
-        xDistIn = self.x - xIn
-        yDistIn = self.y - yIn
-        xDistEdge = xDistIn*distIn/distEdge
-        yDistEdge = yDistIn*distIn/distEdge
-        xEdge = self.x - xDistEdge
-        yEdge = self.y - yDistEdge
-        return (xEdge, yEdge)
+        xDistIn = xIn - self.x 
+        yDistIn = yIn - self.y 
+        xDistEdge = xDistIn*distEdge/(distIn+0.1)
+        yDistEdge = yDistIn*distEdge/(distIn+0.1)
+        xEdge = xDistEdge + self.x 
+        yEdge = yDistEdge + self.y 
+        return (int(xEdge), int(yEdge))
 
     def run(self):
         self.draw()
@@ -113,8 +113,6 @@ class Rect(Moveble):
     def run(self):
         self.draw()
         self.move()
-
-
 
 class Handle(Rect):
     def __init__(self, x, y):
@@ -225,7 +223,7 @@ class Line:
 
 if __name__ == "__main__":
     
-    box = Rect(400, 300, 300, 200)
+    box = Circle(400, 300, 40)
     
     while(True):
         
