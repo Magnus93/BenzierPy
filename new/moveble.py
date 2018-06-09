@@ -62,7 +62,7 @@ class Circle(Moveble):
         (MX, MY) = mouse.pos
         return ((self.x-MX)**2 + (self.y-MY)**2) < self.r**2
 
-    def nearestEdge(self, xIn, yIn):
+    def nearestEdge(self, (xIn, yIn)):
         distIn = trans2D.distance((self.x, self.y), (xIn, yIn))
         distEdge = self.r 
         xDistIn = self.x - xIn
@@ -81,8 +81,7 @@ class Rect(Moveble):
     def __init__(self, x, y, w, h):
         Moveble.__init__(self, x, y)
         self.w = w 
-        self.h = h 
-        self.slope = self.h/self.w
+        self.h = h
     
     def isHit(self):
         (MX, MY) = mouse.pos
@@ -91,20 +90,18 @@ class Rect(Moveble):
         else:
             return False    
 
-    def nearestEdge(self, pos):
-        (xIn, yIn) = pos 
-        xDistIn = xIn-self.x
-        yDistIn = yIn-self.y
-        slopeIn = yDistIn/xDistIn 
-        leftRight = xDistIn/abs(xDistIn) # Left=-1,   Right=1
-        belowAbove = yDistIn/abs(yDistIn) # Below=-1,   Above=1
-        if (slopeIn < self.slope): #left/right side
-            xEdge = leftRight*(self.w/2)+self.x
-            yEdge = yIn*(self.w/2)/xIn + self.y
-        else:       # Above/below
-            xEdge = belowAbove*xIn*(self.h/2)/yIn + self.x
-            yEdge = self.h/2+self.y 
-        return (xEdge, yEdge)
+    def nearestEdge(self, (xIn, yIn)): 
+        boxSlope = trans2D.slope(self.w, self.h)
+        inputSlope = trans2D.slope(xIn - self.x, yIn - self.y )  
+        if ( -boxSlope < inputSlope < boxSlope):
+            sign = trans2D.sign(xIn-self.x)
+            xEdge = sign*(self.w/2) + self.x 
+            yEdge = sign*(self.w/2)*inputSlope + self.y 
+        else:
+            sign = sign = trans2D.sign(yIn-self.y) 
+            xEdge = sign*(self.h/2)/(inputSlope) + self.x 
+            yEdge = sign*(self.h/2) + self.y 
+        return (int(xEdge), int(yEdge))
 
     def draw(self):
         rect = (self.x-self.w/2, self.y-self.h/2, self.w, self.h)
@@ -228,18 +225,18 @@ class Line:
 
 if __name__ == "__main__":
     
-    circ1 = Circle(40, 40, 30)
-    circ2 = Circle(460, 400, 30)
-    # line1 = Line(circ1, circ2)
+    box = Rect(400, 300, 300, 200)
     
     while(True):
         
         screen.fill(0x101010)
-        
-        circ1.run()
-        circ2.run()
-        # line1.draw(DRAW_GRID)
-        
+        mouse.run()
+
+        box.run()
+        edge = box.nearestEdge(mouse.pos)
+        pygame.draw.circle(screen, (255,255,255), edge, 5, 5)
+
+
         mouse.run()
         pygame.display.flip()
         mytimer.tick(24)
