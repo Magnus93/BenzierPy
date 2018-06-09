@@ -1,4 +1,11 @@
 import moveble 
+import mouse 
+import trans2D 
+import shapes 
+import pygame 
+
+screen = pygame.display.set_mode((800,600))
+
 '''
 class Connection:
     def __init__(self, node0, node1=None):
@@ -79,22 +86,67 @@ class Connection:
 '''
 
 class Connection:
-    
-class Vector:
-    def __init__(self):
-        self.anchor
-        self.posA  
-        self.handle
-    
-    def setAnchor(self, node):
-        self.anchor = node
-        
+    def __init__(self, startNode, color=(255, 255, 255)):
+        self.vector0 = Vector(startNode)
+        self.vector1 = None 
+        self.path = [(400,400), (450,400)]
+        self.color = color 
 
-class Handle(Rect):
+    def setEndNode(self, node):
+        self.vector1 = Vector(node) 
+
+    def calcPath(self):
+        anchor0 = self.vector0.getAnchorPos()
+        handle0 = self.vector0.getHandlePos()
+        if (self.vector1 != None):
+            anchor1 = self.vector1.getAnchorPos()
+            handle1 = self.vector1.getHandlePos()
+        else: 
+            anchor1 = mouse.pos
+            handle1 = mouse.pos     
+        self.path = shapes.calcBezier(anchor0, anchor1, handle0, handle1)
+
+    def draw(self):
+        pygame.draw.aalines(screen, self.color, False, self.path, 1) 
+        self.vector0.draw()
+        # self.vector1.draw()
+
+    def run(self):
+        self.calcPath()
+        self.draw()
+
+
+class Vector:
+    def __init__(self, anchorNode, color=0xffffff):
+        self.anchorNode = None
+        self.anchorPos = (0, 0) 
+        self.handlePos = (0, 0) 
+        self.setAnchorNode(anchorNode)
+        self.color = color 
+
+    def setAnchorNode(self, node, vectorLength=30):
+        self.anchorNode = node
+        self.anchorPos = node.nearestEdge(mouse.pos)
+        nodeCenterPos = (self.anchorNode.x, self.anchorNode.y)
+        self.handlePos = trans2D.getHandlePos(self.anchorPos, nodeCenterPos, vectorLength)
+    
+    def getAnchorPos(self):
+        return self.anchorPos
+
+    def getHandlePos(self):
+        return self.handlePos
+
+    def draw(self):
+        pygame.draw.line(screen, self.color, self.anchorPos, self.handlePos, 1)
+
+    def run(self):
+        self.draw() 
+
+class Handle(moveble.Rect):
     def __init__(self, x, y):
         Rect.__init__(self, x, y, 10, 10) 
 
-class Anchor(Circle):
+class Anchor(moveble.Circle):
     def __init__(self, x, y):
         Circle.__init__(self, x, y, 8)
 
