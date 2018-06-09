@@ -84,8 +84,6 @@ class state:
             endObj = self.isHitObjects()
             if (endObj == None or endObj == self.getLastConnection().getStartNode()):
                 self.deleteLastConnection()
-            else:
-                self.setLastConnectionEndNode(endObj)
 
     def getLastConnection(self):
         return self.connList[-1]
