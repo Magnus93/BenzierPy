@@ -200,7 +200,7 @@ class Vector:
 class Handle(moveble.Rect):
     def __init__(self, x, y):
         moveble.Rect.__init__(self, x, y, 18, 18) 
-    
+
     def run(self):
         moveble.Rect.run(self) 
 

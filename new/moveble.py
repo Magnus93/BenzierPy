@@ -34,19 +34,21 @@ class Moveble:
 		self.x = x
 		self.y = y
 
+    def isActive(self):
+        return self.active 
+
     def getPos(self):
         return (self.x, self.y)
 
     def run(self):
-        if (self.isHit()):
-            if (mouse.down[0] and self.selected):
-                self.active = True
-            if (mouse.up[0]):
+        if (self.isHit() and mouse.down[0] and self.selected):
+            self.active = True 
+        if (mouse.up[0]):
                 self.active = False 
-            if (self.active):
-                (MX, MY) = mouse.pos
-                self.x = MX
-                self.y = MY 
+        if (self.active):
+            (MX, MY) = mouse.pos
+            self.x = MX
+            self.y = MY 
 
 class Circle(Moveble):
     def __init__(self, x, y, r):
