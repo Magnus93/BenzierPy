@@ -149,14 +149,17 @@ class Vector:
         self.setAnchorNode(anchorNode)
         self.color = color 
 
+    def restrainAnchor(self, pos):
+        (anchorX, anchorY) = self.anchorNode.nearestEdge(pos)
+        self.anchor.setPos(anchorX, anchorY)  
+
     def setAnchorNode(self, node, vectorLength=100):
-        (anchorX, anchorY) = self.anchorNode.nearestEdge(mouse.pos)
-        self.anchor.setPos(anchorX, anchorY) 
+        self.restrainAnchor(mouse.pos)
         self.setLength(vectorLength)
     
     def setLength(self, length):
         if (length == 0):
-            length = 40
+            length = 10
         nodeCenterPos = self.anchorNode.getPos() 
         (handleX, handleY) = trans2D.getHandlePos(self.anchor.getPos(), nodeCenterPos, length)
         self.handle.setPos(handleX, handleY) 
@@ -191,14 +194,11 @@ class Vector:
 
     def runDynamicMovement(self):
         if (self.handle.isActive()):
-            handlePos = self.handle.getPos()
-            (anchorX, anchorY) = self.anchorNode.nearestEdge(handlePos) 
-            self.anchor.setPos(anchorX, anchorY)
+            self.restrainAnchor(self.handle.getPos())
         if (self.anchor.isActive()):
-            (anchorX, anchorY) = self.anchorNode.nearestEdge(mouse.pos)
-            self.anchor.setPos(anchorX, anchorY) 
+            self.restrainAnchor(mouse.pos) 
             vectorLength = trans2D.distance(self.anchor.getPos(), self.handle.getPos())
-            self.setAnchorNode(self.anchorNode, vectorLength)
+            self.setLength(vectorLength)
 
 
     def run(self):
