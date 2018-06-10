@@ -115,17 +115,6 @@ class Rect(Moveble):
     def run(self):
         self.draw()
         Moveble.run(self)  
-
-class Handle(Rect):
-    def __init__(self, x, y):
-        Rect.__init__(self, x, y, 10, 10) 
-
-class Anchor(Circle):
-    def __init__(self, x, y):
-        Circle.__init__(self, x, y, 8)
-
-    def __str__(self):
-        return "This is an anchor at "+ str(self.getPos())
     
 
 '''
