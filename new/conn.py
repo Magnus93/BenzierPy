@@ -155,6 +155,8 @@ class Vector:
         self.setLength(vectorLength)
     
     def setLength(self, length):
+        if (length == 0):
+            length = 40
         nodeCenterPos = self.anchorNode.getPos() 
         (handleX, handleY) = trans2D.getHandlePos(self.anchor.getPos(), nodeCenterPos, length)
         self.handle.setPos(handleX, handleY) 
@@ -189,10 +191,15 @@ class Vector:
 
     def runDynamicMovement(self):
         if (self.handle.isActive()):
-            print "handle is active - dynamic position " + str(mouse.pos) 
             handlePos = self.handle.getPos()
             (anchorX, anchorY) = self.anchorNode.nearestEdge(handlePos) 
             self.anchor.setPos(anchorX, anchorY)
+        if (self.anchor.isActive()):
+            (anchorX, anchorY) = self.anchorNode.nearestEdge(mouse.pos)
+            self.anchor.setPos(anchorX, anchorY) 
+            vectorLength = trans2D.distance(self.anchor.getPos(), self.handle.getPos())
+            self.setAnchorNode(self.anchorNode, vectorLength)
+
 
     def run(self):
         self.draw() 
