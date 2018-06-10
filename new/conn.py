@@ -143,20 +143,20 @@ class Connection:
 
 class Vector:
     def __init__(self, anchorNode, color=0xffffff):
-        self.anchorNode = None
+        self.anchorNode = anchorNode 
         self.anchor = Anchor(0,0)
         self.handle = Handle(0, 0)
         self.setAnchorNode(anchorNode)
         self.color = color 
 
     def setAnchorNode(self, node, vectorLength=100):
-        self.anchorNode = node
-        self.anchorPos = node.nearestEdge(mouse.pos)
+        (anchorX, anchorY) = self.anchorNode.nearestEdge(mouse.pos)
+        self.anchor.setPos(anchorX, anchorY) 
         self.setLength(vectorLength)
     
     def setLength(self, length):
-        nodeCenterPos = (self.anchorNode.x, self.anchorNode.y)
-        (handleX, handleY) = trans2D.getHandlePos(self.anchorPos, nodeCenterPos, length)
+        nodeCenterPos = self.anchorNode.getPos() 
+        (handleX, handleY) = trans2D.getHandlePos(self.anchor.getPos(), nodeCenterPos, length)
         self.handle.setPos(handleX, handleY) 
 
     def setHandleAtMouse(self): 
@@ -172,7 +172,7 @@ class Vector:
         return self.anchorNode 
 
     def getAnchorPos(self):
-        return self.anchorPos
+        return self.anchor.getPos() 
 
     def getHandlePos(self):
         return self.handle.getPos() 
@@ -183,7 +183,7 @@ class Vector:
         return None 
 
     def draw(self):
-        pygame.draw.line(screen, self.color, self.anchorPos, self.handle.getPos(), 1)
+        pygame.draw.line(screen, self.color, self.getAnchorPos(), self.handle.getPos(), 1)
 
     def runDynamicMovement(self):
         if (self.handle.isActive()):
@@ -195,6 +195,7 @@ class Vector:
     def run(self):
         self.draw() 
         self.handle.run() 
+        self.anchor.run() 
         self.runDynamicMovement()
 
 class Handle(moveble.Rect):
