@@ -21,6 +21,7 @@ class Moveble:
         self.hover = False
         self.active = False
         self.selected = False
+        self.typeName = "Moveble"
 
     def select(self):
         self.selected = True
@@ -33,6 +34,9 @@ class Moveble:
     def setPos(self, x, y):
 		self.x = x
 		self.y = y
+
+    def getTypeName(self):
+        return self.typeName
 
     def isActive(self):
         return self.active 

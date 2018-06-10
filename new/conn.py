@@ -178,7 +178,9 @@ class Vector:
         return self.handle.getPos() 
 
     def isHitControllers(self):
-        if (self.handle.isHit()):
+        if (self.anchor.isHit()):
+            return self.anchor  
+        elif (self.handle.isHit()):
             return self.handle 
         return None 
 
@@ -200,11 +202,10 @@ class Vector:
 
 class Handle(moveble.Rect):
     def __init__(self, x, y):
-        moveble.Rect.__init__(self, x, y, 18, 18) 
-
-    def run(self):
-        moveble.Rect.run(self) 
+        moveble.Rect.__init__(self, x, y, 18, 18)
+        self.typeName = "Handle"  
 
 class Anchor(moveble.Circle):
     def __init__(self, x, y):
         moveble.Circle.__init__(self, x, y, 8)
+        self.typeName = "Anchor" 

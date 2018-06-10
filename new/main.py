@@ -75,7 +75,7 @@ class state:
                 connect.placeStartNode()
             elif(hitObject != None and hitObject != connect.getStartNode()):
                 connect.setEndNode(hitObject)
-                connect.setEndVectorLength(0.4*length)
+                connect.setEndVectorLength(0.3*length)
             else:
                 connect.removeEndNode()
         if mouse.up[0] and self.isCreatingConn:
@@ -97,7 +97,7 @@ class state:
     def isHitObjects(self):
         for c in self.connList:
             ctrl = c.isHitControllers()
-            if (ctrl):
+            if (ctrl and not self.isCreatingConn):
                 return ctrl 
         for o in self.objList:
             if (o.isHit()):
