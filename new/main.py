@@ -30,14 +30,11 @@ class state:
         
     def runSelectMode(self):
         if (mouse.down[0]):
-            hit = False 
-            for o in self.objList:
-                if (o.isHit()):
-                    self.deselectAll()
-                    self.select(o)
-                    hit = True
-                    break
-            if (not hit):
+            hitObject = self.isHitObjects()
+            if hitObject != None:
+                self.deselectAll()
+                self.select(hitObject) 
+            else:
                 self.deselectAll()
 
     def runDeleteMode(self):
@@ -81,7 +78,6 @@ class state:
                 connect.setEndVectorLength(0.4*length)
             else:
                 connect.removeEndNode()
-
         if mouse.up[0] and self.isCreatingConn:
             self.isCreatingConn = False
             self.changeMode("select")
@@ -99,6 +95,10 @@ class state:
         self.connList = self.connList[:-1]
 
     def isHitObjects(self):
+        for c in self.connList:
+            ctrl = c.isHitControllers()
+            if (ctrl):
+                return ctrl 
         for o in self.objList:
             if (o.isHit()):
                 return o

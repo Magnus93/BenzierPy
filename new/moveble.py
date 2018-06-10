@@ -37,7 +37,7 @@ class Moveble:
     def getPos(self):
         return (self.x, self.y)
 
-    def move(self):
+    def run(self):
         if (self.isHit()):
             if (mouse.down[0] and self.selected):
                 self.active = True
@@ -75,7 +75,7 @@ class Circle(Moveble):
 
     def run(self):
         self.draw()
-        self.move()
+        Moveble.run(self) 
 
 class Rect(Moveble):
     def __init__(self, x, y, w, h):
@@ -112,7 +112,7 @@ class Rect(Moveble):
 
     def run(self):
         self.draw()
-        self.move()
+        Moveble.run(self)  
 
 class Handle(Rect):
     def __init__(self, x, y):
