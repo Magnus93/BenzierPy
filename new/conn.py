@@ -101,7 +101,7 @@ class Connection:
         return self.vector0.getAnchorNode()
 
     def placeStartNode(self):
-        self.vector0.setAnchorNode(self.vector0.getAnchorNode())
+        self.vector0.connectAnchor(self.vector0.getAnchorNode())
 
     def setEndNode(self, node):
         self.vector1 = Vector(node) 
@@ -146,14 +146,14 @@ class Vector:
         self.anchorNode = anchorNode 
         self.anchor = Anchor(0,0)
         self.handle = Handle(0, 0)
-        self.setAnchorNode(anchorNode)
+        self.connectAnchor(anchorNode)
         self.color = color 
 
     def restrainAnchor(self, pos):
         (anchorX, anchorY) = self.anchorNode.nearestEdge(pos)
         self.anchor.setPos(anchorX, anchorY)  
 
-    def setAnchorNode(self, node, vectorLength=100):
+    def connectAnchor(self, node, vectorLength=100):
         self.restrainAnchor(mouse.pos)
         self.setLength(vectorLength)
     
@@ -163,12 +163,6 @@ class Vector:
         nodeCenterPos = self.anchorNode.getPos() 
         (handleX, handleY) = trans2D.getHandlePos(self.anchor.getPos(), nodeCenterPos, length)
         self.handle.setPos(handleX, handleY) 
-
-    def setHandleAtMouse(self): 
-        pass 
-
-    def setAnchorAtMouse(self):
-        pass 
 
     def removeAnchor(self):
         self.anchorNode = None 
