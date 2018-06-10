@@ -89,7 +89,6 @@ class Connection:
     def __init__(self, startNode, color=(255, 255, 255)):
         self.vector0 = Vector(startNode)
         self.vector1 = None 
-        self.path = [(400,400), (450,400)]
         self.color = color 
 
     def setStartVectorLength(self, length):
@@ -118,7 +117,7 @@ class Connection:
             ctrl = self.vector1.isHitControllers()
         return ctrl
 
-    def calcPath(self):
+    def getPath(self):
         anchor0 = self.vector0.getAnchorPos()
         handle0 = self.vector0.getHandlePos()
         if (self.vector1 != None):
@@ -127,22 +126,15 @@ class Connection:
         else: 
             anchor1 = mouse.pos
             handle1 = mouse.pos     
-        self.path = shapes.calcIntegerBezier(anchor0, anchor1, handle0, handle1)
+        return shapes.calcIntegerBezier(anchor0, anchor1, handle0, handle1)
 
     def draw(self):
-        pygame.draw.aalines(screen, self.color, False, self.path, 1) 
-        pygame.draw.circle(screen, self.color, (self.path[0]), 5, 1)
-        # self.drawArrow()
+        pygame.draw.aalines(screen, self.color, False, self.getPath(), 1) 
         self.vector0.draw()
         if (self.vector1 != None):
             self.vector1.draw()
 
-    def drawArrow(self): #Not working
-        arrowList = shapes.calcArrow(self.path[-1], self.path[-1], self.path[-2])
-        pygame.draw.polygon(screen, self.color, arrowList, 1)
-
     def run(self):
-        self.calcPath()
         self.draw()
         self.vector0.run()
         if (self.vector1):
@@ -152,7 +144,7 @@ class Connection:
 class Vector:
     def __init__(self, anchorNode, color=0xffffff):
         self.anchorNode = None
-        self.anchorPos = (0, 0) 
+        self.anchor = Anchor(0,0)
         self.handle = Handle(0, 0)
         self.setAnchorNode(anchorNode)
         self.color = color 
@@ -193,9 +185,17 @@ class Vector:
     def draw(self):
         pygame.draw.line(screen, self.color, self.anchorPos, self.handle.getPos(), 1)
 
+    def runDynamicMovement(self):
+        if (self.handle.isActive()):
+            print "handle is active - dynamic position " + str(mouse.pos) 
+            handlePos = self.handle.getPos()
+            (anchorX, anchorY) = self.anchorNode.nearestEdge(handlePos) 
+            self.anchor.setPos(anchorX, anchorY)
+
     def run(self):
         self.draw() 
         self.handle.run() 
+        self.runDynamicMovement()
 
 class Handle(moveble.Rect):
     def __init__(self, x, y):
@@ -206,4 +206,4 @@ class Handle(moveble.Rect):
 
 class Anchor(moveble.Circle):
     def __init__(self, x, y):
-        Circle.__init__(self, x, y, 8)
+        moveble.Circle.__init__(self, x, y, 8)
