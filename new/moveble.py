@@ -21,28 +21,38 @@ class Moveble:
         self.hover = False
         self.active = False
         self.selected = False
+        self.typeName = "Moveble"
+
     def select(self):
         self.selected = True
+
     def deselect(self):
         self.selected = False
+
     def setColor(self, color):
         self.color = color
-	def getPos(self):
-		return (self.x, self.y)
-    def setPos(self, (x, y)):
+    def setPos(self, x, y):
 		self.x = x
 		self.y = y
-    
-    def move(self):
-        if (self.isHit()):
-            if (mouse.down[0] and self.selected):
-                self.active = True
-            if (mouse.up[0]):
+
+    def getTypeName(self):
+        return self.typeName
+
+    def isActive(self):
+        return self.active 
+
+    def getPos(self):
+        return (self.x, self.y)
+
+    def run(self):
+        if (self.isHit() and mouse.down[0] and self.selected):
+            self.active = True 
+        if (mouse.up[0]):
                 self.active = False 
-            if (self.active):
-                (MX, MY) = mouse.pos
-                self.x = MX
-                self.y = MY 
+        if (self.active):
+            (MX, MY) = mouse.pos
+            self.x = MX
+            self.y = MY 
 
 class Circle(Moveble):
     def __init__(self, x, y, r):
@@ -58,51 +68,46 @@ class Circle(Moveble):
         (MX, MY) = mouse.pos
         return ((self.x-MX)**2 + (self.y-MY)**2) < self.r**2
 
-    def nearestEdge(self, xIn, yIn):
+    def nearestEdge(self, (xIn, yIn)):
         distIn = trans2D.distance((self.x, self.y), (xIn, yIn))
         distEdge = self.r 
-        xDistIn = self.x - xIn
-        yDistIn = self.y - yIn
-        xDistEdge = xDistIn*distIn/distEdge
-        yDistEdge = yDistIn*distIn/distEdge
-        xEdge = self.x - xDistEdge
-        yEdge = self.y - yDistEdge
-        return (xEdge, yEdge)
+        xDistIn = xIn - self.x 
+        yDistIn = yIn - self.y 
+        xDistEdge = xDistIn*distEdge/(distIn+0.1)
+        yDistEdge = yDistIn*distEdge/(distIn+0.1)
+        xEdge = xDistEdge + self.x 
+        yEdge = yDistEdge + self.y 
+        return (int(xEdge), int(yEdge))
 
     def run(self):
         self.draw()
-        self.move()
-
+        Moveble.run(self) 
 
 class Rect(Moveble):
     def __init__(self, x, y, w, h):
         Moveble.__init__(self, x, y)
-        self.x = x 
-        self.y = y
         self.w = w 
-        self.h = h 
-        self.slope = self.h/self.w
+        self.h = h
     
     def isHit(self):
         (MX, MY) = mouse.pos
         if (self.x-self.w/2 < MX < self.x+self.w/2):
             return self.y-self.h/2 < MY < self.y+self.h/2
         else:
-            return False
+            return False    
 
-    def nearestEdge(self, xIn, yIn):
-        xDistIn = xIn-self.x
-        yDistIn = yIn-self.y
-        slopeIn = yDistIn/xDistIn 
-        leftRight = xDistIn/abs(xDistIn) # Left=-1,   Right=1
-        belowAbove = yDistIn/abs(yDistIn) # Below=-1,   Above=1
-        if (slopeIn < self.slope): #left/right side
-            xEdge = leftRight*(self.w/2)+self.x
-            yEdge = yIn*(self.w/2)/xIn + self.y
-        else:       # Above/below
-            xEdge = belowAbove*xIn*(self.h/2)/yIn + self.x
-            yEdge = self.h/2+self.x
-        return (xEdge, yEdge)
+    def nearestEdge(self, (xIn, yIn)): 
+        boxSlope = trans2D.slope(self.w, self.h)
+        inputSlope = trans2D.slope(xIn - self.x, yIn - self.y )  
+        if ( -boxSlope < inputSlope < boxSlope):
+            sign = trans2D.sign(xIn-self.x)
+            xEdge = sign*(self.w/2) + self.x 
+            yEdge = sign*(self.w/2)*inputSlope + self.y 
+        else:
+            sign = sign = trans2D.sign(yIn-self.y) 
+            xEdge = sign*(self.h/2)/(inputSlope) + self.x 
+            yEdge = sign*(self.h/2) + self.y 
+        return (int(xEdge), int(yEdge))
 
     def draw(self):
         rect = (self.x-self.w/2, self.y-self.h/2, self.w, self.h)
@@ -113,72 +118,8 @@ class Rect(Moveble):
 
     def run(self):
         self.draw()
-        self.move()
-
-class Connection:
-    def __init__(self, node0, node1=None):
-        self.node0 = node0 # StartNode
-        self.x0 = node0.x
-        self.y0 = node0.y
-        self.handle0 = Handle(0,0)
-        self.handle1 = Handle(0,0)
-        self.node1 = node1
-        if (node1):
-            self.setEndNode(node1) # EndNode
-        else:
-            (self.x1, self.y1) = mouse.pos
-        self.path = []
-        self.calcPath()
-        self.color = (255, 255, 255)
-
-    def getStartNode(self):
-        return self.node0
-
-    def setEndNode(self, node1):
-        self.node1 = node1
-        self.calcPath()
-
-    def isHit(self):
-        return False
-
-    def draw(self):
-        pygame.draw.circle(screen, self.color, (self.x0, self.y0), 5, 1)
-        pygame.draw.aalines(screen, self.color, False, self.path, 1)
-        pygame.draw.line(screen, self.color, (self.x0, self.y0), self.handle0.getPos(), 1)
-        pygame.draw.line(screen, self.color, (self.x1, self.y1), self.handle1.getPos(), 1)
-        arrow = shapes.calcArrow((self.x1, self.y1) ,self.path[-1], self.path[-2])
-        pygame.draw.polygon(screen, self.color, arrow, 1)
-
-    def calcPath(self):
-        self.x0 = self.node0.x
-        self.y0 = self.node0.y
-        if (self.node1 == None):
-            (self.x1, self.y1) = mouse.pos 
-            self.handle1.setPos(mouse.pos[0], mouse.pos[1]) 
-        else:
-            self.x1 = self.node1.x
-            self.y1 = self.node1.y
-        anchor0 = (self.x0, self.y0)
-        anchor1 = (self.x1, self.y1)
-        handle0 = self.handle0.getPos()
-        handle1 = self.handle1.getPos()
-        self.path = shapes.calcBezier(anchor0, anchor1, handle0, handle1)
-
-    def run(self):
-        self.draw()
-        self.calcPath()
-
-class Handle(Circle):
-    def __init__(self, x, y):
-        Circle.__init__(self, x, y, 20)
+        Moveble.run(self)  
     
-    def getPos(self):
-        return (self.x, self.y)
-    
-    def setPos(self, x, y):
-        self.x = x
-        self.y = y 
-
 
 '''
 class Handle(Circle):
@@ -200,7 +141,7 @@ class Handle(Circle):
         Circle.run(self)
         pygame.draw.line(screen, 0x00ffff, (self.x, self.y), (self.m1.x, self.m1.y), 1)
         pass
-'''      
+    
 class Anchor:
     def __init__(self, mv, hd):
         self.m = mv
@@ -273,21 +214,22 @@ class Line:
 			pointlist.append((bx,by))
 			t += 0.02
 		pygame.draw.aalines(screen, (100,255,255), False, pointlist)
+'''  
 
 if __name__ == "__main__":
     
-    circ1 = Circle(40, 40, 30)
-    circ2 = Circle(460, 400, 30)
-    line1 = Line(circ1, circ2)
+    box = Circle(400, 300, 40)
     
     while(True):
         
         screen.fill(0x101010)
-        
-        circ1.run()
-        circ2.run()
-        line1.draw(DRAW_GRID)
-        
+        mouse.run()
+
+        box.run()
+        edge = box.nearestEdge(mouse.pos)
+        pygame.draw.circle(screen, (255,255,255), edge, 5, 5)
+
+
         mouse.run()
         pygame.display.flip()
         mytimer.tick(24)
